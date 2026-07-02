@@ -510,11 +510,81 @@
     }
     .gw-transition-overlay.active { left: 0; }
 
+    /* ============================================================
+       PHOTOGRAPHY PRELOADER (shown after the gateway slide, before
+       the site reveals). Uses the site's own Linen & Pearl palette
+       so it reads as Indie Lane branding, not the gateway's.
+       ============================================================ */
+    #ilPreloader {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: var(--bg-deep, #2B2B2B);
+      display: none;
+      flex-direction: column; justify-content: center; align-items: center;
+      z-index: 28000;
+      opacity: 1;
+      transition: opacity 0.8s ease;
+    }
+    .il-preloader-inner {
+      display: flex; flex-direction: column; align-items: center; gap: 1.6rem;
+    }
+
+    /* camera aperture: 6 blades that iris open/closed, like a shutter cycling */
+    .il-aperture { width: 68px; height: 68px; position: relative; }
+    .il-aperture .il-blade {
+      position: absolute; top: 50%; left: 50%; width: 38px; height: 38px;
+      margin: -19px 0 0 -19px;
+      clip-path: polygon(50% 50%, 100% 0%, 100% 32%);
+      background: var(--sand, #C2B6AC);
+      transform-origin: 50% 50%;
+      animation: ilApertureBlade 1.8s ease-in-out infinite;
+    }
+    .il-aperture .il-blade:nth-child(1) { --il-rot: 0deg; animation-delay: 0s; }
+    .il-aperture .il-blade:nth-child(2) { --il-rot: 60deg; animation-delay: 0.09s; }
+    .il-aperture .il-blade:nth-child(3) { --il-rot: 120deg; animation-delay: 0.18s; }
+    .il-aperture .il-blade:nth-child(4) { --il-rot: 180deg; animation-delay: 0.27s; }
+    .il-aperture .il-blade:nth-child(5) { --il-rot: 240deg; animation-delay: 0.36s; }
+    .il-aperture .il-blade:nth-child(6) { --il-rot: 300deg; animation-delay: 0.45s; }
+
+    @keyframes ilApertureBlade {
+      0%, 100% { transform: rotate(var(--il-rot)) scale(0.4); opacity: 0.5; }
+      50% { transform: rotate(var(--il-rot)) scale(1); opacity: 1; }
+    }
+
+    .il-preloader-logo {
+      width: 92px; height: auto;
+      filter: brightness(0) invert(1);
+      opacity: 0.95;
+    }
+
+    .il-preloader-text {
+      font-family: var(--font-body, 'Montserrat', sans-serif);
+      font-size: 0.7rem; letter-spacing: 4px; text-transform: uppercase;
+      color: var(--sand, #C2B6AC); font-weight: 500;
+      display: flex; gap: 0.05em;
+    }
+    .il-preloader-text span {
+      display: inline-block; opacity: 0; transform: translateY(6px);
+      animation: ilLetterIn 0.5s ease forwards;
+    }
+    @keyframes ilLetterIn { to { opacity: 1; transform: translateY(0); } }
+
     #site-content { display: none; opacity: 0; transition: opacity 0.6s ease; }
     #site-content.gw-visible { display: block; opacity: 1; }
   </style>
 </head>
 <body>
+
+  <!-- ===================== PHOTOGRAPHY PRELOADER ===================== -->
+  <div id="ilPreloader">
+    <div class="il-preloader-inner">
+      <div class="il-aperture">
+        <span class="il-blade"></span><span class="il-blade"></span><span class="il-blade"></span>
+        <span class="il-blade"></span><span class="il-blade"></span><span class="il-blade"></span>
+      </div>
+      <img src="assets/indie-lane-logo.png" alt="" class="il-preloader-logo">
+      <div class="il-preloader-text" id="ilPreloaderText"></div>
+    </div>
+  </div>
 
   <!-- ===================== ANTHEON GATEWAY ===================== -->
   <div class="gw-transition-overlay" id="gwOverlay"></div>
@@ -1142,16 +1212,39 @@
     var feedback = document.getElementById('error-msg');
     var togglePwd = document.getElementById('gwTogglePwd');
     var passInput = document.getElementById('gwPasskey');
+    var preloader = document.getElementById('ilPreloader');
+    var preloaderText = document.getElementById('ilPreloaderText');
+
+    if(preloaderText){
+      "Developing".split('').forEach(function(ch, i){
+        var span = document.createElement('span');
+        span.textContent = ch;
+        span.style.animationDelay = (0.5 + i * 0.04) + 's';
+        preloaderText.appendChild(span);
+      });
+    }
 
     function revealSite(){
-      gatewayContainer.style.display = 'none';
       siteContent.classList.add('gw-visible');
       if(window.initIndieLaneSite) window.initIndieLaneSite();
     }
 
+    function runIlPreloader(){
+      gatewayContainer.style.display = 'none';
+      preloader.style.opacity = '1';
+      preloader.style.display = 'flex';
+      setTimeout(function(){
+        preloader.style.opacity = '0';
+        setTimeout(function(){
+          preloader.style.display = 'none';
+          revealSite();
+        }, 800);
+      }, 4000);
+    }
+
     // Skip the gate if this session already unlocked it
     if(sessionStorage.getItem('antheon_unlocked') === 'true'){
-      revealSite();
+      runIlPreloader();
     }
 
     togglePwd.addEventListener('click', function(){
@@ -1176,8 +1269,8 @@
           overlay.classList.add('active');
 
           setTimeout(function(){
-            revealSite();
             overlay.classList.remove('active');
+            runIlPreloader();
           }, 700);
         }, 400);
       } else {
