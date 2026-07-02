@@ -507,54 +507,8 @@
       position: fixed; top: 0; left: -100%; width: 100%; height: 100%;
       background: linear-gradient(135deg, #7c5dfa, #3b82f6);
       z-index: 29000; transition: left 0.6s cubic-bezier(0.83, 0, 0.17, 1);
-      display: flex; align-items: center; justify-content: center;
     }
     .gw-transition-overlay.active { left: 0; }
-
-    /* ---------- photography-themed preloader ---------- */
-    .gw-preloader {
-      display: flex; flex-direction: column; align-items: center; gap: 1.4rem;
-      opacity: 0; transition: opacity 0.4s ease;
-    }
-    .gw-transition-overlay.active .gw-preloader { opacity: 1; transition-delay: 0.35s; }
-
-    .gw-aperture { width: 72px; height: 72px; position: relative; }
-    .gw-aperture .gw-blade {
-      position: absolute; top: 50%; left: 50%; width: 40px; height: 40px;
-      margin: -20px 0 0 -20px;
-      clip-path: polygon(50% 50%, 100% 0%, 100% 30%);
-      background: rgba(255,255,255,0.92);
-      transform-origin: 50% 50%;
-      animation: gwApertureBlade 1.6s ease-in-out infinite;
-    }
-    .gw-aperture .gw-blade:nth-child(1) { transform: rotate(0deg); animation-delay: 0s; }
-    .gw-aperture .gw-blade:nth-child(2) { transform: rotate(60deg); animation-delay: 0.08s; }
-    .gw-aperture .gw-blade:nth-child(3) { transform: rotate(120deg); animation-delay: 0.16s; }
-    .gw-aperture .gw-blade:nth-child(4) { transform: rotate(180deg); animation-delay: 0.24s; }
-    .gw-aperture .gw-blade:nth-child(5) { transform: rotate(240deg); animation-delay: 0.32s; }
-    .gw-aperture .gw-blade:nth-child(6) { transform: rotate(300deg); animation-delay: 0.4s; }
-
-    @keyframes gwApertureBlade {
-      0%, 100% { transform: rotate(var(--gw-rot, 0deg)) scale(0.35); opacity: 0.55; }
-      50% { transform: rotate(var(--gw-rot, 0deg)) scale(1); opacity: 1; }
-    }
-    .gw-aperture .gw-blade:nth-child(1) { --gw-rot: 0deg; }
-    .gw-aperture .gw-blade:nth-child(2) { --gw-rot: 60deg; }
-    .gw-aperture .gw-blade:nth-child(3) { --gw-rot: 120deg; }
-    .gw-aperture .gw-blade:nth-child(4) { --gw-rot: 180deg; }
-    .gw-aperture .gw-blade:nth-child(5) { --gw-rot: 240deg; }
-    .gw-aperture .gw-blade:nth-child(6) { --gw-rot: 300deg; }
-
-    .gw-preloader-text {
-      font-family: 'Inter', -apple-system, sans-serif;
-      font-size: 0.75rem; letter-spacing: 4px; text-transform: uppercase;
-      color: rgba(255,255,255,0.95); font-weight: 600; display: flex; gap: 0.05em;
-    }
-    .gw-preloader-text span {
-      display: inline-block; opacity: 0; transform: translateY(6px);
-      animation: gwLetterIn 0.5s ease forwards;
-    }
-    @keyframes gwLetterIn { to { opacity: 1; transform: translateY(0); } }
 
     #site-content { display: none; opacity: 0; transition: opacity 0.6s ease; }
     #site-content.gw-visible { display: block; opacity: 1; }
@@ -563,15 +517,7 @@
 <body>
 
   <!-- ===================== ANTHEON GATEWAY ===================== -->
-  <div class="gw-transition-overlay" id="gwOverlay">
-    <div class="gw-preloader">
-      <div class="gw-aperture">
-        <span class="gw-blade"></span><span class="gw-blade"></span><span class="gw-blade"></span>
-        <span class="gw-blade"></span><span class="gw-blade"></span><span class="gw-blade"></span>
-      </div>
-      <div class="gw-preloader-text" id="gwPreloaderText"></div>
-    </div>
-  </div>
+  <div class="gw-transition-overlay" id="gwOverlay"></div>
   <div id="gateway-container">
     <div class="login-card" id="gwCard">
       <div class="logo-container">
@@ -1196,17 +1142,6 @@
     var feedback = document.getElementById('error-msg');
     var togglePwd = document.getElementById('gwTogglePwd');
     var passInput = document.getElementById('gwPasskey');
-    var preloaderText = document.getElementById('gwPreloaderText');
-
-    if(preloaderText){
-      var gwLabel = "Developing";
-      gwLabel.split('').forEach(function(ch, i){
-        var span = document.createElement('span');
-        span.textContent = ch === ' ' ? ' ' : ch;
-        span.style.animationDelay = (0.5 + i * 0.04) + 's';
-        preloaderText.appendChild(span);
-      });
-    }
 
     function revealSite(){
       gatewayContainer.style.display = 'none';
@@ -1243,7 +1178,7 @@
           setTimeout(function(){
             revealSite();
             overlay.classList.remove('active');
-          }, 4000);
+          }, 700);
         }, 400);
       } else {
         feedback.style.color = "var(--gw-error-red)";
