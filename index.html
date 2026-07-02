@@ -525,11 +525,11 @@
       transition: opacity 0.8s ease;
     }
     .il-preloader-inner {
-      display: flex; flex-direction: column; align-items: center; gap: 1.6rem;
+      display: flex; flex-direction: column; align-items: center; gap: 2rem;
     }
 
     /* camera taking a shot: click-punch + flash burst, then turns to reframe, loops */
-    .il-camera-wrap { width: 72px; height: 72px; position: relative; display: flex; align-items: center; justify-content: center; }
+    .il-camera-wrap { width: 96px; height: 96px; position: relative; display: flex; align-items: center; justify-content: center; }
     .il-flash {
       position: absolute; inset: 0; border-radius: 50%;
       background: radial-gradient(circle, #fff 0%, rgba(255,255,255,0.4) 55%, rgba(255,255,255,0) 75%);
@@ -538,7 +538,7 @@
     }
     .il-camera-icon {
       position: relative; z-index: 2;
-      font-size: 2.5rem; color: var(--sand, #C2B6AC);
+      font-size: 3.4rem; color: var(--sand, #C2B6AC);
       transform-origin: 50% 50%;
       animation: ilCameraShot 2.6s ease-in-out infinite;
     }
@@ -560,22 +560,28 @@
     }
 
     .il-preloader-logo {
-      width: 92px; height: auto;
+      width: 124px; height: auto;
       filter: brightness(0) invert(1);
       opacity: 0.95;
     }
 
-    .il-preloader-text {
-      font-family: var(--font-body, 'Montserrat', sans-serif);
-      font-size: 0.7rem; letter-spacing: 4px; text-transform: uppercase;
-      color: var(--sand, #C2B6AC); font-weight: 500;
-      display: flex; gap: 0.05em;
+    .il-status-bar {
+      width: 160px; height: 3px; border-radius: 3px;
+      background: rgba(255,255,255,0.12);
+      overflow: hidden;
+      position: relative;
     }
-    .il-preloader-text span {
-      display: inline-block; opacity: 0; transform: translateY(6px);
-      animation: ilLetterIn 0.5s ease forwards;
+    .il-status-bar::after {
+      content: '';
+      position: absolute; top: 0; left: 0; height: 100%; width: 40%;
+      border-radius: 3px;
+      background: var(--sand, #C2B6AC);
+      animation: ilStatusSlide 1.6s ease-in-out infinite;
     }
-    @keyframes ilLetterIn { to { opacity: 1; transform: translateY(0); } }
+    @keyframes ilStatusSlide {
+      0% { left: -40%; }
+      100% { left: 100%; }
+    }
 
     #site-content { display: none; opacity: 0; transition: opacity 0.6s ease; }
     #site-content.gw-visible { display: block; opacity: 1; }
@@ -591,7 +597,7 @@
         <i class="fa-solid fa-camera il-camera-icon"></i>
       </div>
       <img src="assets/indie-lane-logo.png" alt="" class="il-preloader-logo">
-      <div class="il-preloader-text" id="ilPreloaderText"></div>
+      <div class="il-status-bar"></div>
     </div>
   </div>
 
@@ -1222,16 +1228,6 @@
     var togglePwd = document.getElementById('gwTogglePwd');
     var passInput = document.getElementById('gwPasskey');
     var preloader = document.getElementById('ilPreloader');
-    var preloaderText = document.getElementById('ilPreloaderText');
-
-    if(preloaderText){
-      "Developing".split('').forEach(function(ch, i){
-        var span = document.createElement('span');
-        span.textContent = ch;
-        span.style.animationDelay = (0.5 + i * 0.04) + 's';
-        preloaderText.appendChild(span);
-      });
-    }
 
     function revealSite(){
       siteContent.classList.add('gw-visible');
