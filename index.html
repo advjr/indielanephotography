@@ -528,26 +528,35 @@
       display: flex; flex-direction: column; align-items: center; gap: 1.6rem;
     }
 
-    /* camera aperture: 6 blades that iris open/closed, like a shutter cycling */
-    .il-aperture { width: 68px; height: 68px; position: relative; }
-    .il-aperture .il-blade {
-      position: absolute; top: 50%; left: 50%; width: 38px; height: 38px;
-      margin: -19px 0 0 -19px;
-      clip-path: polygon(50% 50%, 100% 0%, 100% 32%);
-      background: var(--sand, #C2B6AC);
-      transform-origin: 50% 50%;
-      animation: ilApertureBlade 1.8s ease-in-out infinite;
+    /* camera taking a shot: click-punch + flash burst, then turns to reframe, loops */
+    .il-camera-wrap { width: 72px; height: 72px; position: relative; display: flex; align-items: center; justify-content: center; }
+    .il-flash {
+      position: absolute; inset: 0; border-radius: 50%;
+      background: radial-gradient(circle, #fff 0%, rgba(255,255,255,0.4) 55%, rgba(255,255,255,0) 75%);
+      opacity: 0; transform: scale(0.3);
+      animation: ilFlash 2.6s ease-in-out infinite;
     }
-    .il-aperture .il-blade:nth-child(1) { --il-rot: 0deg; animation-delay: 0s; }
-    .il-aperture .il-blade:nth-child(2) { --il-rot: 60deg; animation-delay: 0.09s; }
-    .il-aperture .il-blade:nth-child(3) { --il-rot: 120deg; animation-delay: 0.18s; }
-    .il-aperture .il-blade:nth-child(4) { --il-rot: 180deg; animation-delay: 0.27s; }
-    .il-aperture .il-blade:nth-child(5) { --il-rot: 240deg; animation-delay: 0.36s; }
-    .il-aperture .il-blade:nth-child(6) { --il-rot: 300deg; animation-delay: 0.45s; }
+    .il-camera-icon {
+      position: relative; z-index: 2;
+      font-size: 2.5rem; color: var(--sand, #C2B6AC);
+      transform-origin: 50% 50%;
+      animation: ilCameraShot 2.6s ease-in-out infinite;
+    }
 
-    @keyframes ilApertureBlade {
-      0%, 100% { transform: rotate(var(--il-rot)) scale(0.4); opacity: 0.5; }
-      50% { transform: rotate(var(--il-rot)) scale(1); opacity: 1; }
+    @keyframes ilFlash {
+      0%, 36% { opacity: 0; transform: scale(0.3); }
+      40% { opacity: 0.95; transform: scale(1.5); }
+      50% { opacity: 0; transform: scale(1.7); }
+      100% { opacity: 0; transform: scale(0.3); }
+    }
+
+    @keyframes ilCameraShot {
+      0%, 33% { transform: rotate(0deg) scale(1); }
+      38% { transform: rotate(0deg) scale(0.9); }
+      44% { transform: rotate(0deg) scale(1); }
+      60% { transform: rotate(-14deg) scale(1); }
+      78% { transform: rotate(-14deg) scale(1); }
+      92%, 100% { transform: rotate(0deg) scale(1); }
     }
 
     .il-preloader-logo {
@@ -577,9 +586,9 @@
   <!-- ===================== PHOTOGRAPHY PRELOADER ===================== -->
   <div id="ilPreloader">
     <div class="il-preloader-inner">
-      <div class="il-aperture">
-        <span class="il-blade"></span><span class="il-blade"></span><span class="il-blade"></span>
-        <span class="il-blade"></span><span class="il-blade"></span><span class="il-blade"></span>
+      <div class="il-camera-wrap">
+        <span class="il-flash"></span>
+        <i class="fa-solid fa-camera il-camera-icon"></i>
       </div>
       <img src="assets/indie-lane-logo.png" alt="" class="il-preloader-logo">
       <div class="il-preloader-text" id="ilPreloaderText"></div>
